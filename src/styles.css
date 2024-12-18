@@ -1,1 +1,150 @@
-/* You can add global styles to this file, and also import other style files */
+/* Allgemeines Styling */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #1e1e1e; /* Sehr dunkles Grau für den Hintergrund */
+  color: #e0e0e0; /* Helle Schriftfarbe für bessere Lesbarkeit */
+  margin: 0;
+  padding: 0;
+}
+
+h2, h4 {
+  color: #f1f1f1; /* Helle Farbe für die Überschriften */
+}
+
+/* Card Styling */
+.card {
+  background-color: #2e3b4e; /* Dunkles Blau-Grau für die Karte */
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Weicherer Schatten für modernen Look */
+}
+
+/* Form Inputs */
+.form-control {
+  background-color: #333; /* Dunkles Grau für Eingabefelder */
+  color: #fafafa; /* Helle Schriftfarbe für bessere Lesbarkeit */
+  border: 1px solid #444;
+  border-radius: 5px;
+}
+
+.form-control:focus {
+  background-color: #444; /* Etwas helleres Grau beim Fokus */
+  border-color: #4CAF50; /* Grüner Fokusrahmen */
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5); /* Grüner Schimmer für den Fokus */
+}
+
+.form-select {
+  background-color: #333; /* Dunkles Grau für Dropdowns */
+  color: #f1f1f1; /* Helle Schriftfarbe */
+  border: 1px solid #444;
+  border-radius: 5px;
+}
+
+.form-select:focus {
+  background-color: #444; /* Etwas helleres Grau bei Fokus */
+  border-color: #4CAF50; /* Grüner Fokusrahmen */
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5); /* Grüner Schimmer für den Fokus */
+}
+
+/* Button Styles */
+.btn {
+  border-radius: 5px;
+  font-weight: bold; /* Fettgedruckte Buttons für bessere Sichtbarkeit */
+}
+
+/* Modernisierte Button-Farben (dunkel und subtil) */
+.btn-primary {
+  background-color: #3a7ca5; /* Dezentes Blau */
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #2c5a77; /* Dunkleres Blau bei Hover */
+}
+
+.btn-success {
+  background-color: #6fbf73; /* Sanftes Grün */
+  border: none;
+}
+
+.btn-success:hover {
+  background-color: #4f8e5b; /* Dunkleres Grün bei Hover */
+}
+
+.btn-danger {
+  background-color: #dc6f72; /* Dezentes Rot */
+  border: none;
+}
+
+.btn-danger:hover {
+  background-color: #c04f43; /* Dunkleres Rot bei Hover */
+}
+
+.btn-warning {
+  background-color: #e8b95d; /* Dezentes Gelb */
+  border: none;
+}
+
+.btn-warning:hover {
+  background-color: #c48b4c; /* Dunkleres Gelb bei Hover */
+}
+
+.btn-secondary {
+  background-color: #6c757d; /* Grauer Button */
+  border: none;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268; /* Dunkleres Grau bei Hover */
+}
+
+input[type="color"] {
+  width: 50px;
+  height: 30px;
+  padding: 0;
+  border-radius: 5px;
+  border: none;
+}
+
+/* Table Styling */
+.table-dark {
+  background-color: #2c2f38; /* Dunkles Grau mit blauen Untertönen für die Tabelle */
+  color: #f1f1f1; /* Helle Schriftfarbe */
+}
+
+.table-dark th, .table-dark td {
+  border-color: #444;
+}
+
+.table-dark tbody tr:hover {
+  background-color: #444; /* Leichterer Hover-Effekt für die Zeilen */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .card {
+    width: 90%; /* Breitere Karten für kleinere Bildschirme */
+  }
+
+  .input-group {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%; /* Buttons auf kleinen Bildschirmen auf volle Breite setzen */
+    margin-top: 10px;
+  }
+
+  .table-dark {
+    font-size: 0.9rem; /* Kleinere Schriftgröße für die Tabelle auf kleinen Bildschirmen */
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    width: 100%; /* Noch breitere Karten auf sehr kleinen Bildschirmen */
+  }
+
+  .input-group {
+    flex-direction: column;
+  }
+}

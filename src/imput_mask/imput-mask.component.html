@@ -1,0 +1,69 @@
+<div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="card p-4 shadow-lg" style="width: 60%; background-color: #3f3f3f;">
+      <h2 class="text-center">Gruppenübersicht</h2>
+  
+      <!-- Benutzer Input Form -->
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Benutzername" [(ngModel)]="newUserName">
+      </div>
+      <div class="input-group mb-3">
+        <select class="form-select" [(ngModel)]="newUserRole">
+          <option *ngFor="let role of roles" [value]="role.name">{{ role.name }}</option>
+        </select>
+      </div>
+  
+      <!-- Add User Button -->
+      <button class="btn btn-primary w-100" (click)="addUser()">Benutzer hinzufügen</button>
+  
+      <!-- Display User List -->
+      <div class="mt-4">
+        <h4 class="text-center">Benutzerliste</h4>
+        <table class="table table-dark mt-3">
+          <thead>
+            <tr>
+              <th>Benutzername</th>
+              <th>Rolle</th>
+              <th>Aktionen</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of users; let i = index">
+              <td>{{ user.name }}</td>
+              <td [style.backgroundColor]="getRoleColor(user.role)" class="text-white p-2 rounded">
+                {{ user.role }}
+              </td>
+              <td>
+                <button class="btn btn-danger btn-sm" (click)="deleteUser(i)">Löschen</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+  
+      <!-- Button to apply role to all users -->
+      <div class="mt-4">
+        <select class="form-select w-auto me-2" [(ngModel)]="allUsersRole">
+          <option *ngFor="let role of roles" [value]="role.name">{{ role.name }}</option>
+        </select>
+        <button class="btn btn-success" (click)="setAllUsersRole()">Alles übernehmen</button>
+      </div>
+  
+      <!-- Button to clear all users -->
+      <div class="mt-4">
+        <button class="btn btn-danger w-100" (click)="deleteAllUsers()">Alles löschen</button>
+      </div>
+  
+      <!-- Role Management Section -->
+      <div class="mt-5">
+        <h4 class="text-center">Eigene Rollen erstellen</h4>
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" placeholder="Neue Rolle" [(ngModel)]="newRoleName">
+        </div>
+        <div class="input-group mb-3">
+          <input type="color" class="form-control" [(ngModel)]="newRoleColor">
+        </div>
+        <button class="btn btn-primary w-100" (click)="addRole()">Erstellen</button>
+      </div>
+    </div>
+  </div>
+  
