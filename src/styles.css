@@ -16,7 +16,12 @@ h2, h4 {
   background-color: #2e3b4e; /* Dunkles Blau-Grau für die Karte */
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Weicherer Schatten für modernen Look */
+  
+  /* Scrollbar-Einstellungen */
+  max-height: 80vh; /* Maximal 80% der Bildschirmhöhe */
+  overflow-y: auto; /* Vertikale Scrollbar, wenn der Inhalt zu groß ist */
 }
+
 
 /* Form Inputs */
 .form-control {
@@ -45,10 +50,18 @@ h2, h4 {
   box-shadow: 0 0 5px rgba(76, 175, 80, 0.5); /* Grüner Schimmer für den Fokus */
 }
 
+.form-control::placeholder {
+  color: #bbb;
+  font-style: Times; /* Kursivschrift für den Placeholder */
+  font-size: 14px; /* Schriftgröße anpassen */
+}
+
+
+
 /* Button Styles */
 .btn {
   border-radius: 5px;
-  font-weight: bold; /* Fettgedruckte Buttons für bessere Sichtbarkeit */
+  font-weight: 500; /* Mittelgroße Buttonschrift*/
 }
 
 /* Modernisierte Button-Farben (dunkel und subtil) */
@@ -119,32 +132,50 @@ input[type="color"] {
   background-color: #444; /* Leichterer Hover-Effekt für die Zeilen */
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .card {
-    width: 90%; /* Breitere Karten für kleinere Bildschirme */
+/* Allgemeines Styling Ende
+
+
+
+
+
+
+
+
+/* Die Tabelle Benutzer Rolle Aktionen mit den angelegten Benutzern
+
+/* Stellt sicher, dass die Tabelle sich an den Bildschirm anpasst */
+.table-responsive {
+  width: 100%; /* Stellt sicher, dass die Tabelle die ganze Breite nutzt */
+  overflow-x: auto; /* Ermöglicht horizontalen Scrollen, wenn die Tabelle breiter ist als der Bildschirm */
+}
+
+/* Stellt sicher, dass Tabellenzellen den Text richtig umbrechen */
+table th, table td {
+  word-wrap: break-word; /* Bricht lange Wörter und verhindert das Überlaufen */
+  overflow-wrap: break-word; /* Zusätzlich für besseren Textumbruch */
+  padding: 10px; /* Fügt Abstand innerhalb der Zellen hinzu */
+  text-align: left; /* Text links ausrichten */
+}
+
+/* Optimiert das Design für kleinere Bildschirme */
+@media (max-width: 767px) {
+  table th, table td {
+    font-size: 10px; /* Verringert die Schriftgröße auf kleinen Bildschirmen */
+    padding: 3px; /* Reduziert das Padding */
   }
 
-  .input-group {
-    flex-direction: column;
+  .table {
+    font-size: 14px; /* Anpassung der Schriftgröße der gesamten Tabelle */
   }
 
-  .btn {
-    width: 100%; /* Buttons auf kleinen Bildschirmen auf volle Breite setzen */
-    margin-top: 10px;
-  }
-
-  .table-dark {
-    font-size: 0.9rem; /* Kleinere Schriftgröße für die Tabelle auf kleinen Bildschirmen */
+  .table-responsive {
+    -webkit-overflow-scrolling: touch; /* Sorgt für ein besseres Scroll-Erlebnis auf mobilen Geräten */
   }
 }
 
-@media (max-width: 480px) {
-  .card {
-    width: 100%; /* Noch breitere Karten auf sehr kleinen Bildschirmen */
-  }
-
-  .input-group {
-    flex-direction: column;
+@media (max-width: 576px) {
+  table th, table td {
+    font-size: 8px; /* Noch kleinere Schriftgröße für sehr kleine Bildschirme */
+    padding: 2px; /* Noch mehr Padding reduzieren */
   }
 }

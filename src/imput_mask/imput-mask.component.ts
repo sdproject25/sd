@@ -78,4 +78,3 @@ export class ImputMaskComponent {
     this.users.splice(index, 1);  // Entfernt den Benutzer aus der Liste
   }
 }
-
