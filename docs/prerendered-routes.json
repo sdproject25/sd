@@ -1,5 +1,6 @@
 {
   "routes": [
-    "/"
+    "/imput-mask",
+    "/startpage-admin"
   ]
 }
