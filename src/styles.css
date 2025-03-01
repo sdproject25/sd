@@ -132,6 +132,20 @@ input[type="color"] {
   background-color: #444; /* Leichterer Hover-Effekt für die Zeilen */
 }
 
+/* Feste Breite für die Rollennamen, damit die Buttons darunter ausgerichtet sind */
+.role-label {
+  min-width: 150px; /* Passt sich an die längste Rollenbezeichnung an */
+  text-align: left;
+  flex-grow: 1;
+}
+
+/* Löschen-Button an rechter Seite ausrichten */
+.delete-btn {
+  white-space: nowrap;  /* Verhindert Umbrüche im Button */
+  text-align: center;
+}
+
+
 /* Allgemeines Styling Ende
 
 
