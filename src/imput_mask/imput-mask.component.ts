@@ -18,15 +18,17 @@ export class ImputMaskComponent {
   newRoleColor: string = '#000000';
   users: { name: string; roles: string[] }[] = [];
   roles: { name: string; color: string }[] = [];
+  events: { name: string; payer: string; amount: number; beneficiaries: string[] }[] = [];
 
   constructor(private router: Router, private userService: UserService) {
     this.loadUsersAndRoles();
   }
 
-  // Lädt Benutzer und Rollen aus dem Service
+  // Lädt Benutzer, Rollen und Ereignisse aus dem Service
   loadUsersAndRoles() {
     this.users = this.userService.getUsers();
     this.roles = this.userService.getRoles();
+    this.events = this.userService.getEvents(); // Ereignisse laden
   }
 
   // Benutzer hinzufügen
@@ -77,8 +79,21 @@ export class ImputMaskComponent {
 
   // Benutzer löschen
   deleteUser(index: number) {
+    const userToDelete = this.users[index].name;
+
+    // Benutzer entfernen
     this.users.splice(index, 1);
     this.userService.setUsers(this.users);
+
+    // Benutzer aus allen Ereignissen entfernen
+    this.events.forEach(event => {
+      if (event.payer === userToDelete) {
+        event.payer = 'Unbekannt'; // Kennzeichnet den gelöschten Zahler
+      }
+      event.beneficiaries = event.beneficiaries.filter(b => b !== userToDelete);
+    });
+
+    this.userService.setEvents(this.events);
   }
 
   // Alle Benutzer löschen
@@ -98,8 +113,8 @@ export class ImputMaskComponent {
     this.userService.setUsers([...this.users]);
     this.router.navigate(['/startpage-admin']);
   }
-  
 }
+
 
 
 

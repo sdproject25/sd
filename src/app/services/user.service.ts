@@ -35,8 +35,14 @@ export class UserService {
   }
 
   // 🟣 Ereignisse abrufen
-  getEvents() {
+  getEvents(): { name: string; payer: string; amount: number; beneficiaries: string[] }[] {
     return this.events;
+  }
+
+  // 🟣 Ereignisse speichern
+  setEvents(events: { name: string; payer: string; amount: number; beneficiaries: string[] }[]) {
+    this.events = events;
+    this.saveToStorage();
   }
 
   // 🟣 Ereignis hinzufügen
@@ -48,12 +54,12 @@ export class UserService {
   // 🔴 Bestimmte Rollenfarbe abrufen
   getRoleColor(role: string): string {
     const foundRole = this.roles.find(r => r.name === role);
-    return foundRole ? foundRole.color : '#000000'; // Standardfarbe Schwarz
+    return foundRole ? foundRole.color : '#000000';
   }
 
   // 🟡 Daten sicher in localStorage speichern
   private saveToStorage() {
-    if (typeof window !== 'undefined') { // ✅ Verhindert `localStorage is not defined`
+    if (typeof window !== 'undefined') { // ✅ Verhindert Fehler in SSR-Modus
       localStorage.setItem('users', JSON.stringify(this.users));
       localStorage.setItem('roles', JSON.stringify(this.roles));
       localStorage.setItem('events', JSON.stringify(this.events));
@@ -62,20 +68,12 @@ export class UserService {
 
   // 🟡 Daten sicher aus localStorage laden
   private loadFromStorage() {
-    if (typeof window !== 'undefined') { // ✅ Verhindert Fehler im SSR-Modus
+    if (typeof window !== 'undefined') { // ✅ Verhindert Fehler in SSR-Modus
       this.users = JSON.parse(localStorage.getItem('users') || '[]');
       this.roles = JSON.parse(localStorage.getItem('roles') || '[]');
       this.events = JSON.parse(localStorage.getItem('events') || '[]');
     }
   }
-
-    // 🟣 Ereignisse setzen (Fehlende Methode)
-    setEvents(events: { name: string; payer: string; amount: number; beneficiaries: string[] }[]) {
-      this.events = events;
-      this.saveToStorage();
-    }
-
-
 }
 
 
