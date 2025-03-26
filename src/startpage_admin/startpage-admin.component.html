@@ -38,40 +38,65 @@
     <input type="text" class="form-control mb-2" placeholder="Ereignisname" [(ngModel)]="newEvent.name">
 
     <!-- Wer hat gezahlt? -->
-    <input type="text" class="form-control mb-2" placeholder="Wer hat gezahlt?" 
-           [(ngModel)]="payer" (focus)="showPayerSuggestions = true" (input)="filterUsers()">
-    <ul *ngIf="showPayerSuggestions" class="list-group">
-      <li *ngFor="let user of filteredUsers" class="list-group-item list-group-item-dark" (click)="selectPayer(user)">
-        {{ user.name }} - <span *ngFor="let role of user.roles" class="badge me-1 text-white" [style.backgroundColor]="getRoleColor(role)">{{ role }}</span>
+    <input type="text" class="form-control mb-2" placeholder="Wer hat gezahlt?" [(ngModel)]="payer" (focus)="filterUsers()" (input)="filterUsers()">
+    <ul *ngIf="filteredUsers.length" class="list-group">
+      <li *ngFor="let user of filteredUsers" class="list-group-item d-flex justify-content-between align-items-center"
+          (click)="selectPayer(user)">
+        <span>
+          {{ user.name }} - 
+          <span *ngFor="let role of user.roles" 
+                class="badge text-white"
+                [style.backgroundColor]="getRoleColor(role)">
+            {{ role }}
+          </span>
+        </span>
       </li>
     </ul>
 
-    <!-- Ausgewählter Zahler -->
-    <div *ngIf="selectedPayer" class="alert alert-info mt-2">
-      <strong>{{ selectedPayer.name }}</strong>
-      <span *ngFor="let role of selectedPayer.roles" class="badge bg-primary me-1">{{ role }}</span>
+    <!-- Ausgewählter Payer anzeigen -->
+    <div *ngIf="selectedPayer" class="alert alert-info mt-2 d-flex align-items-center" [style.backgroundColor]="getPayerColor()">
+      <strong class="me-2">{{ selectedPayer.name }}</strong>
+      <span *ngFor="let role of selectedPayer.roles" class="badge text-white me-1" [style.backgroundColor]="getRoleColor(role)">
+        {{ role }}
+      </span>
     </div>
 
-    <!-- Empfänger auswählen -->
-    <input type="text" class="form-control mb-2" placeholder="Empfänger eingeben..." [(ngModel)]="beneficiaryInput" (focus)="showBeneficiarySuggestions = true" (input)="filterBeneficiaries()">
-    <ul *ngIf="showBeneficiarySuggestions" class="list-group">
-      <li *ngFor="let user of filteredBeneficiaries" class="list-group-item list-group-item-dark" (click)="addBeneficiary(user)">
-        {{ user.name }} - <span *ngFor="let role of user.roles" class="badge me-1 text-white" [style.backgroundColor]="getRoleColor(role)">{{ role }}</span>
+    <!-- Empfänger auswählen mit Autovervollständigung -->
+    <h5 class="mt-3">Empfänger auswählen:</h5>
+    <input type="text" class="form-control mb-2" placeholder="Empfänger eingeben..." (input)="filterBeneficiaries($event)">
+    <ul *ngIf="filteredBeneficiaries.length" class="list-group">
+      <li *ngFor="let user of filteredBeneficiaries" class="list-group-item d-flex justify-content-between align-items-center"
+          (click)="addBeneficiary(user)">
+        <span>
+          {{ user.name }} - 
+          <span *ngFor="let role of user.roles" 
+                class="badge text-white"
+                [style.backgroundColor]="getRoleColor(role)">
+            {{ role }}
+          </span>
+        </span>
       </li>
     </ul>
 
     <!-- Liste der ausgewählten Empfänger -->
-    <div *ngIf="newEvent.beneficiaries.length > 0" class="mt-2">
-      <h5>Ausgewählte Empfänger:</h5>
+    <div *ngIf="selectedBeneficiaries.length > 0" class="mt-2">
+      <h6>Ausgewählte Empfänger:</h6>
       <ul class="list-group">
-        <li *ngFor="let beneficiary of newEvent.beneficiaries" class="list-group-item d-flex justify-content-between align-items-center">
-          {{ beneficiary }}  
-          <button class="btn btn-sm btn-danger" (click)="removeBeneficiary(beneficiary)">❌</button>
+        <li *ngFor="let user of selectedBeneficiaries" class="list-group-item d-flex justify-content-between align-items-center">
+          <span>
+            {{ user.name }} - 
+            <span *ngFor="let role of user.roles" 
+                  class="badge text-white"
+                  [style.backgroundColor]="getRoleColor(role)">
+              {{ role }}
+            </span>
+          </span>
+          <button class="btn btn-sm btn-danger" (click)="removeBeneficiary(user)">❌</button>
         </li>
       </ul>
     </div>
 
-    <input type="number" class="form-control mb-2" placeholder="Betrag" [(ngModel)]="newEvent.amount">
+    <input type="number" class="form-control mb-2 mt-2" placeholder="Betrag" [(ngModel)]="newEvent.amount">
 
     <button class="btn btn-primary w-100 mt-2" (click)="saveEvent()">Speichern</button>
     <button class="btn btn-danger w-100 mt-2" (click)="cancelEventCreation()">Abbrechen</button>
@@ -81,8 +106,26 @@
   <h3 class="mt-4">📜 Ereignisliste:</h3>
   <ul class="list-group">
     <li *ngFor="let event of events; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
-      {{ event.name }} - {{ event.payer }} zahlte {{ event.amount | number:'1.2-2' }}€ für {{ event.beneficiaries.join(', ') }}
+      {{ event.name }} - 
+      <strong [style.color]="getPayerColor()">{{ event.payer }}</strong> zahlte {{ event.amount | number:'1.2-2' }}€
+      für 
+      <span *ngFor="let beneficiary of event.beneficiaries" class="badge text-white me-1"
+            [style.backgroundColor]="getRoleColor(beneficiary)">
+        {{ beneficiary }}
+      </span>
       <button class="btn btn-sm btn-danger" (click)="deleteEvent(i)">❌</button>
+    </li>
+  </ul>
+
+  <!-- Schuldenübersicht -->
+  <h3 class="mt-4">💰 Schuldenübersicht:</h3>
+  <ul class="list-group">
+    <li *ngFor="let user of users" class="list-group-item">
+      {{ user.name }}: 
+      <span [class.text-danger]="calculateDebts()[user.name] < 0" 
+            [class.text-success]="calculateDebts()[user.name] > 0">
+        {{ calculateDebts()[user.name] | number:'1.2-2' }}€
+      </span>
     </li>
   </ul>
 </div>

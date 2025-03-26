@@ -13,82 +13,76 @@ import { UserService } from '../app/services/user.service';
 export class StartpageAdminComponent {
   users: { name: string; roles: string[] }[] = [];
   events: { name: string; payer: string; amount: number; beneficiaries: string[] }[] = [];
-
   eventFormVisible = false;
   newEvent = { name: '', payer: '', amount: 0, beneficiaries: [] as string[] };
-
-  // Für die Autovervollständigung
   payer = '';
-  beneficiaryInput = '';
+  selectedPayer: { name: string; roles: string[] } | null = null;
   filteredUsers: { name: string; roles: string[] }[] = [];
   filteredBeneficiaries: { name: string; roles: string[] }[] = [];
-
-  selectedPayer: { name: string; roles: string[] } | null = null;
-  showPayerSuggestions = false;
-  showBeneficiarySuggestions = false;
+  selectedBeneficiaries: { name: string; roles: string[] }[] = [];
 
   constructor(private userService: UserService) {
     this.loadUsersAndEvents();
   }
 
-  // 🔄 Lädt Nutzer und Ereignisse aus dem UserService
+  // 🔄 Daten aus dem Service laden
   loadUsersAndEvents() {
     this.users = this.userService.getUsers();
     this.events = this.userService.getEvents();
   }
 
-  // 🟢 Zeigt oder versteckt das Formular
+  // 🔘 Formular ein-/ausblenden
   toggleEventForm() {
     this.eventFormVisible = !this.eventFormVisible;
   }
 
-  // ❌ Setzt das Formular zurück
+  // 🔄 Ereignis abbrechen (Formular leeren)
   cancelEventCreation() {
     this.newEvent = { name: '', payer: '', amount: 0, beneficiaries: [] };
     this.payer = '';
-    this.beneficiaryInput = '';
     this.selectedPayer = null;
+    this.selectedBeneficiaries = [];
     this.eventFormVisible = false;
   }
 
-  // 🔍 Filtert Nutzer für die Zahlerauswahl
+  // 🔍 Nutzerfilter für Payer (Autovervollständigung)
   filterUsers() {
     this.filteredUsers = this.users.filter(user =>
       user.name.toLowerCase().includes(this.payer.toLowerCase())
     );
   }
 
-  // ✅ Setzt den Zahler, wenn ein Name ausgewählt wurde
+  // ✅ Payer auswählen
   selectPayer(user: { name: string; roles: string[] }) {
-    this.selectedPayer = user;
     this.newEvent.payer = user.name;
+    this.selectedPayer = user;
     this.payer = user.name;
-    this.showPayerSuggestions = false;
+    this.filteredUsers = [];
   }
 
-  // 🔍 Filtert Nutzer für die Empfängerauswahl
-  filterBeneficiaries() {
+  // 🔍 Nutzerfilter für Empfänger (Autovervollständigung)
+  filterBeneficiaries(event: any) {
+    const inputValue = event.target.value.toLowerCase();
     this.filteredBeneficiaries = this.users.filter(user =>
-      user.name.toLowerCase().includes(this.beneficiaryInput.toLowerCase()) &&
-      !this.newEvent.beneficiaries.includes(user.name)
+      user.name.toLowerCase().includes(inputValue) &&
+      !this.selectedBeneficiaries.some(b => b.name === user.name)
     );
   }
 
-  // ➕ Fügt einen Empfänger hinzu
+  // ✅ Nutzer als Empfänger hinzufügen
   addBeneficiary(user: { name: string; roles: string[] }) {
-    if (!this.newEvent.beneficiaries.includes(user.name)) {
-      this.newEvent.beneficiaries.push(user.name);
-    }
-    this.beneficiaryInput = '';
-    this.showBeneficiarySuggestions = false;
+    this.selectedBeneficiaries.push(user);
+    this.newEvent.beneficiaries.push(user.name);
+    this.filteredBeneficiaries = [];
   }
 
-  // ❌ Entfernt einen Empfänger
-  removeBeneficiary(name: string) {
-    this.newEvent.beneficiaries = this.newEvent.beneficiaries.filter(b => b !== name);
+  // ❌ Empfänger entfernen
+  removeBeneficiary(user: { name: string; roles: string[] }) {
+    this.selectedBeneficiaries = this.selectedBeneficiaries.filter(b => b.name !== user.name);
+    this.newEvent.beneficiaries = this.newEvent.beneficiaries.filter(name => name !== user.name);
   }
 
-  // 💾 Speichert das Ereignis
+  // 💾 Ereignis speichern
   saveEvent() {
     if (this.newEvent.name && this.newEvent.payer && this.newEvent.amount > 0 && this.newEvent.beneficiaries.length > 0) {
       this.userService.addEvent(this.newEvent);
@@ -97,29 +91,9 @@ export class StartpageAdminComponent {
     }
   }
 
-  // ❌ Löscht ein Ereignis
+  // ❌ Ereignis löschen
   deleteEvent(index: number) {
     this.events.splice(index, 1);
-    this.userService.setEvents(this.events);
-  }
-
-  // ❌ Löscht einen Benutzer und aktualisiert alle Ereignisse
-  deleteUser(index: number) {
-    const userToDelete = this.users[index].name;
-
-    // Entferne den Benutzer aus der Liste
-    this.users.splice(index, 1);
-    this.userService.setUsers(this.users);
-
-    // Entferne den Benutzer aus allen Ereignissen
-    this.events.forEach(event => {
-      if (event.payer === userToDelete) {
-        event.payer = ''; // Markiert als gelöscht
-      }
-      event.beneficiaries = event.beneficiaries.filter(b => b !== userToDelete);
-    });
-
-    // Ereignisse aktualisieren
     this.userService.setEvents(this.events);
   }
 
@@ -139,11 +113,38 @@ export class StartpageAdminComponent {
     return debts;
   }
 
-  // 🟢 Holt die Farbe einer Rolle
+  // 🟢 Rollenfarbe abrufen
   getRoleColor(role: string): string {
     return this.userService.getRoleColor(role);
   }
+
+  // 🟢 Payer-Farbe abrufen
+  getPayerColor(): string {
+    if (this.selectedPayer) {
+      const roleColor = this.selectedPayer.roles.map(role => this.getRoleColor(role));
+      return roleColor.length > 0 ? roleColor[0] : '#000000';
+    }
+    return '#000000';
+  }
+
+  // 🔴 Benutzer löschen
+  deleteUser(index: number) {
+    const userToDelete = this.users[index].name;
+    this.users.splice(index, 1);
+    this.userService.setUsers(this.users);
+
+    this.events.forEach(event => {
+      if (event.payer === userToDelete) {
+        event.payer = '';
+      }
+      event.beneficiaries = event.beneficiaries.filter(b => b !== userToDelete);
+    });
+
+    this.userService.setEvents(this.events);
+  }
 }
+
+
 
 
 
