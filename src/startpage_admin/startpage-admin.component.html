@@ -28,14 +28,14 @@
   </div>
 
   <button class="btn btn-success w-100 mt-3" (click)="toggleEventForm()">
-    {{ editingIndex !== null ? '✏️ Ereignis bearbeiten' : '📅 Ereignis anlegen' }}
+    📅 Ereignis anlegen
   </button>
 
   <div *ngIf="eventFormVisible" class="mt-3 p-3 bg-dark text-white rounded">
-    <input type="text" class="form-control mb-2" placeholder="Ereignisname" [(ngModel)]="newEvent.name">
-    <input type="text" class="form-control mb-2" placeholder="Wer hat gezahlt?" [(ngModel)]="payer" (focus)="filterUsers()" (input)="filterUsers()">
-    <ul *ngIf="filteredUsers.length" class="list-group">
-      <li *ngFor="let user of filteredUsers" class="list-group-item d-flex justify-content-between align-items-center"
+    <input type="text" class="form-control mb-2 bg-dark text-white" placeholder="Ereignisname" [(ngModel)]="newEvent.name">
+    <input type="text" class="form-control mb-2 bg-dark text-white" placeholder="Wer hat gezahlt?" [(ngModel)]="payer" (focus)="filterUsers()" (input)="filterUsers()">
+    <ul *ngIf="filteredUsers.length" class="list-group bg-dark text-white">
+      <li *ngFor="let user of filteredUsers" class="list-group-item d-flex justify-content-between align-items-center bg-secondary text-white"
           (click)="selectPayer(user)">
         <span>
           {{ user.name }} - 
@@ -46,10 +46,10 @@
       </li>
     </ul>
     
-    <h5 class="mt-3">Empfänger auswählen:</h5>
-    <input type="text" class="form-control mb-2" placeholder="Empfänger eingeben..." (input)="filterBeneficiaries($event)">
-    <ul *ngIf="filteredBeneficiaries.length" class="list-group">
-      <li *ngFor="let user of filteredBeneficiaries" class="list-group-item d-flex justify-content-between align-items-center"
+    
+    <input type="text" class="form-control mb-2 bg-dark text-white" placeholder="Wer trägt die Kosten?" (input)="filterBeneficiaries($event)">
+    <ul *ngIf="filteredBeneficiaries.length" class="list-group bg-dark text-white">
+      <li *ngFor="let user of filteredBeneficiaries" class="list-group-item d-flex justify-content-between align-items-center bg-secondary text-white"
           (click)="addBeneficiary(user)">
         <span>
           {{ user.name }} - 
@@ -65,7 +65,7 @@
     <div *ngIf="selectedBeneficiaries.length > 0" class="mt-2">
       <h6>Ausgewählte Empfänger:</h6>
       <ul class="list-group">
-        <li *ngFor="let user of selectedBeneficiaries" class="list-group-item d-flex justify-content-between align-items-center">
+        <li *ngFor="let user of selectedBeneficiaries" class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white">
           <span>
             {{ user.name }} - 
             <span *ngFor="let role of user.roles" 
@@ -79,10 +79,8 @@
       </ul>
     </div>
 
-    <input type="number" class="form-control mb-2 mt-2" placeholder="Betrag" [(ngModel)]="newEvent.amount">
-    <button class="btn btn-primary w-100 mt-2" (click)="saveEvent()">
-      {{ editingIndex !== null ? 'Änderungen speichern' : 'Speichern' }}
-    </button>
+    <input type="number" class="form-control mb-2 mt-2 bg-dark text-white" placeholder="Betrag" [(ngModel)]="newEvent.amount">
+    <button class="btn btn-primary w-100 mt-2" (click)="saveEvent()">Speichern</button>
     <button class="btn btn-danger w-100 mt-2" (click)="toggleEventForm()">Abbrechen</button>
   </div>
 
