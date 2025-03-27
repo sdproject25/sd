@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../app/services/user.service';
@@ -10,7 +10,7 @@ import { UserService } from '../app/services/user.service';
   templateUrl: './startpage-admin.component.html',
   styleUrls: ['../styles.css']
 })
-export class StartpageAdminComponent {
+export class StartpageAdminComponent implements OnInit {
   users: { name: string; roles: string[] }[] = [];
   events: { name: string; payer: string; amount: number; beneficiaries: string[] }[] = [];
   eventFormVisible = false;
@@ -21,14 +21,18 @@ export class StartpageAdminComponent {
   filteredBeneficiaries: { name: string; roles: string[] }[] = [];
   selectedBeneficiaries: { name: string; roles: string[] }[] = [];
   editingIndex: number | null = null;
+  detailedDebts: { [debtor: string]: { [creditor: string]: number } } = {};
 
-  constructor(private userService: UserService) {
+  constructor(private userService: UserService) {}
+
+  ngOnInit() {
     this.loadUsersAndEvents();
   }
 
   loadUsersAndEvents() {
     this.users = this.userService.getUsers();
     this.events = this.userService.getEvents();
+    this.detailedDebts = this.calculateDetailedDebts();
   }
 
   toggleEventForm() {
@@ -97,6 +101,7 @@ export class StartpageAdminComponent {
         this.userService.addEvent(this.newEvent);
         this.events = this.userService.getEvents();
       }
+      this.detailedDebts = this.calculateDetailedDebts();
       this.resetEventForm();
       this.eventFormVisible = false;
     }
@@ -105,6 +110,7 @@ export class StartpageAdminComponent {
   deleteEvent(index: number) {
     this.events.splice(index, 1);
     this.userService.setEvents(this.events);
+    this.detailedDebts = this.calculateDetailedDebts();
   }
 
   calculateDebts(): { [key: string]: number } {
@@ -118,6 +124,30 @@ export class StartpageAdminComponent {
       });
     });
     return debts;
+  }
+
+  calculateDetailedDebts(): { [debtor: string]: { [creditor: string]: number } } {
+    const detailedDebts: { [debtor: string]: { [creditor: string]: number } } = {};
+
+    this.users.forEach(user => {
+      detailedDebts[user.name] = {};
+      this.users.forEach(other => {
+        if (user.name !== other.name) {
+          detailedDebts[user.name][other.name] = 0;
+        }
+      });
+    });
+
+    this.events.forEach(event => {
+      const splitAmount = event.amount / event.beneficiaries.length;
+      event.beneficiaries.forEach(beneficiary => {
+        if (beneficiary !== event.payer) {
+          detailedDebts[beneficiary][event.payer] += splitAmount;
+        }
+      });
+    });
+
+    return detailedDebts;
   }
 
   getRoleColor(role: string): string {
@@ -139,8 +169,10 @@ export class StartpageAdminComponent {
       event.beneficiaries = event.beneficiaries.filter(b => b !== userToDelete);
     });
     this.userService.setEvents(this.events);
+    this.detailedDebts = this.calculateDetailedDebts();
   }
 }
+
 
 
 
