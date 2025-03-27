@@ -12,16 +12,27 @@ import jsPDF from 'jspdf';
   styleUrls: ['../styles.css']
 })
 export class StartpageAdminComponent implements OnInit {
+  // Benutzerliste
   users: { name: string; roles: string[] }[] = [];
+
+  // Ereignisliste
   events: { name: string; payer: string; amount: number; beneficiaries: string[] }[] = [];
+
+  // Sichtbarkeit des Ereignisformulars
   eventFormVisible = false;
+
+  // Neues Ereignis (temporär zum Bearbeiten/Speichern)
   newEvent = { name: '', payer: '', amount: 0, beneficiaries: [] as string[] };
+
+  // Hilfsvariablen für Benutzerfilterung und Auswahl
   payer = '';
   selectedPayer: { name: string; roles: string[] } | null = null;
   filteredUsers: { name: string; roles: string[] }[] = [];
   filteredBeneficiaries: { name: string; roles: string[] }[] = [];
   selectedBeneficiaries: { name: string; roles: string[] }[] = [];
   editingIndex: number | null = null;
+
+  // Detaillierte Schuldenaufstellung pro Benutzerpaar
   detailedDebts: { [debtor: string]: { [creditor: string]: number } } = {};
 
   constructor(private userService: UserService) {}
@@ -30,12 +41,14 @@ export class StartpageAdminComponent implements OnInit {
     this.loadUsersAndEvents();
   }
 
+  // Lädt Benutzer und Events aus dem Service
   loadUsersAndEvents() {
     this.users = this.userService.getUsers();
     this.events = this.userService.getEvents();
     this.detailedDebts = this.calculateDetailedDebts();
   }
 
+  // Öffnet/schließt das Formular zum Erstellen/Bearbeiten von Events
   toggleEventForm() {
     this.eventFormVisible = !this.eventFormVisible;
     if (!this.eventFormVisible) {
@@ -43,6 +56,7 @@ export class StartpageAdminComponent implements OnInit {
     }
   }
 
+  // Setzt das Eventformular zurück
   resetEventForm() {
     this.newEvent = { name: '', payer: '', amount: 0, beneficiaries: [] };
     this.payer = '';
@@ -51,12 +65,14 @@ export class StartpageAdminComponent implements OnInit {
     this.editingIndex = null;
   }
 
+  // Filtert Benutzerliste nach Eingabe für Zahler
   filterUsers() {
     this.filteredUsers = this.users.filter(user =>
       user.name.toLowerCase().includes(this.payer.toLowerCase())
     );
   }
 
+  // Wählt einen Benutzer als Zahler aus
   selectPayer(user: { name: string; roles: string[] }) {
     this.newEvent.payer = user.name;
     this.selectedPayer = user;
@@ -64,6 +80,7 @@ export class StartpageAdminComponent implements OnInit {
     this.filteredUsers = [];
   }
 
+  // Filtert mögliche Empfänger basierend auf Eingabe
   filterBeneficiaries(event: any) {
     const inputValue = event.target.value.toLowerCase();
     this.filteredBeneficiaries = this.users.filter(user =>
@@ -72,17 +89,20 @@ export class StartpageAdminComponent implements OnInit {
     );
   }
 
+  // Fügt einen Benutzer zur Empfängerliste hinzu
   addBeneficiary(user: { name: string; roles: string[] }) {
     this.selectedBeneficiaries.push(user);
     this.newEvent.beneficiaries.push(user.name);
     this.filteredBeneficiaries = [];
   }
 
+  // Entfernt einen Benutzer aus der Empfängerliste
   removeBeneficiary(user: { name: string; roles: string[] }) {
     this.selectedBeneficiaries = this.selectedBeneficiaries.filter(b => b.name !== user.name);
     this.newEvent.beneficiaries = this.newEvent.beneficiaries.filter(name => name !== user.name);
   }
 
+  // Lädt ein bestehendes Event in das Formular
   editEvent(index: number) {
     this.editingIndex = index;
     const eventToEdit = this.events[index];
@@ -93,6 +113,7 @@ export class StartpageAdminComponent implements OnInit {
     this.eventFormVisible = true;
   }
 
+  // Speichert ein neues oder bearbeitetes Event
   saveEvent() {
     if (this.newEvent.name && this.newEvent.payer && this.newEvent.amount > 0 && this.newEvent.beneficiaries.length > 0) {
       if (this.editingIndex !== null) {
@@ -108,12 +129,14 @@ export class StartpageAdminComponent implements OnInit {
     }
   }
 
+  // Löscht ein Event anhand des Index
   deleteEvent(index: number) {
     this.events.splice(index, 1);
     this.userService.setEvents(this.events);
     this.detailedDebts = this.calculateDetailedDebts();
   }
 
+  // Berechnet die Bilanz jeder Person (vereinfachte Schulden)
   calculateDebts(): { [key: string]: number } {
     let debts: { [key: string]: number } = {};
     this.users.forEach(user => (debts[user.name] = 0));
@@ -127,6 +150,7 @@ export class StartpageAdminComponent implements OnInit {
     return debts;
   }
 
+  // Berechnet detaillierte Schuldenbeziehungen zwischen Nutzern
   calculateDetailedDebts(): { [debtor: string]: { [creditor: string]: number } } {
     const detailedDebts: { [debtor: string]: { [creditor: string]: number } } = {};
 
@@ -151,6 +175,7 @@ export class StartpageAdminComponent implements OnInit {
     return detailedDebts;
   }
 
+  // Exportiert die Schuldenübersicht als PDF
   downloadDebtPdf() {
     const doc = new jsPDF();
     doc.setFontSize(14);
@@ -172,14 +197,17 @@ export class StartpageAdminComponent implements OnInit {
     doc.save('schuldenuebersicht.pdf');
   }
 
+  // Gibt Farbe zu einer Rolle zurück (z. B. für Badge)
   getRoleColor(role: string): string {
     return this.userService.getRoleColor(role);
   }
 
+  // Gibt Farbe basierend auf dem Zahler zurück
   getPayerColor(payer: string): string {
     return this.getRoleColor(payer);
   }
 
+  // Entfernt Benutzer, aktualisiert Events und Schulden
   deleteUser(index: number) {
     const userToDelete = this.users[index].name;
     this.users.splice(index, 1);
@@ -194,6 +222,7 @@ export class StartpageAdminComponent implements OnInit {
     this.detailedDebts = this.calculateDetailedDebts();
   }
 }
+
 
 
 
