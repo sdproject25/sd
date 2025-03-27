@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../app/services/user.service';
+import jsPDF from 'jspdf';
 
 @Component({
   selector: 'app-startpage-admin',
@@ -148,6 +149,27 @@ export class StartpageAdminComponent implements OnInit {
     });
 
     return detailedDebts;
+  }
+
+  downloadDebtPdf() {
+    const doc = new jsPDF();
+    doc.setFontSize(14);
+    doc.text('💸 Schuldenübersicht', 10, 10);
+
+    let y = 20;
+    this.users.forEach(debtor => {
+      this.users.forEach(creditor => {
+        if (debtor.name !== creditor.name) {
+          const amount = this.detailedDebts[debtor.name][creditor.name];
+          if (amount > 0) {
+            doc.text(`${debtor.name} schuldet ${creditor.name}: ${amount.toFixed(2)} €`, 10, y);
+            y += 8;
+          }
+        }
+      });
+    });
+
+    doc.save('schuldenuebersicht.pdf');
   }
 
   getRoleColor(role: string): string {
