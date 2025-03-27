@@ -193,3 +193,15 @@ table th, table td {
     padding: 2px; /* Noch mehr Padding reduzieren */
   }
 }
+
+.btn-neutral-grey {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+}
+
+.btn-neutral-grey:hover {
+  background-color: #5a6268;
+  color: white;
+}
+

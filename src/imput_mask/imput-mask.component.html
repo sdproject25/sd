@@ -25,14 +25,14 @@
                     </label>
                 </div>
                 <!-- Rechte Seite: Löschen-Button (Immer bündig rechts) -->
-                <button class="btn btn-sm btn-danger px-3 py-1" (click)="deleteRole(i)">
+                <button class="btn-outline-danger" (click)="deleteRole(i)">
                     ❌
                 </button>
             </div>
         </div>
 
         <!-- Benutzer hinzufügen -->
-        <button class="btn btn-primary w-100" (click)="addUser()">Benutzer hinzufügen</button>
+        <button class="btn btn-sm btn-neutral-grey" (click)="addUser()">Benutzer hinzufügen</button>
 
         <!-- Benutzerliste -->
         <div class="mt-4">
@@ -57,7 +57,7 @@
                                 </span>
                             </td>
                             <td>
-                                <button class="btn btn-danger btn-sm" (click)="deleteUser(i)">Löschen</button>
+                                <button class="btn btn-danger btn-sm" style="background-color: #6c757d; color: white; border: none;" (click)="deleteUser(i)">Löschen</button>
                             </td>
                         </tr>
                     </tbody>
@@ -67,7 +67,7 @@
 
         <!-- Alle Benutzer löschen -->
         <div class="mt-4">
-            <button class="btn btn-danger w-100" (click)="deleteAllUsers()">Alles löschen</button>
+            <button class="btn btn-neutral-grey w-100" (click)="deleteAllUsers()">Alles löschen</button>
         </div>
 
         <!-- Rollenerstellung -->
@@ -85,9 +85,10 @@
             </div>
 
             <!-- Button zum Erstellen der Rolle -->
-            <button class="btn btn-primary w-100" (click)="addRole()">Rolle erstellen</button>
+            <button class="btn btn-neutral-grey w-100" (click)="addRole()">Rolle erstellen</button>
         </div>
-        <button class="btn btn-primary w-100 mt-3" (click)="goToNextPage()">Weiter</button>
+        <div class="my-2"></div>
+        <button class="btn btn-neutral-grey w-100" (click)="goToNextPage()">Weiter</button>
 
     </div>
 </div>
